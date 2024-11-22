@@ -1,5 +1,13 @@
 //The user will enter a cocktail. Get a cocktail name, photo, and instructions and place them in the DOM
-document.querySelector('#getCocktail').addEventListener('click', cocktailInfo);
+document.querySelector('#inputField').addEventListener('keydown', (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault(); // Prevents default form submission
+    submitButton.click(); // Simulates a button click
+  }
+});
+
+document.querySelector('#submitButton').addEventListener('click', cocktailInfo);
+
 let carousel = {};
 let position = 0;
 
@@ -21,7 +29,7 @@ function cocktailInfo() {
   .catch(err => {
     if (carousel.drinks === null) {
       document.querySelector('h2').innerText = '';
-      document.querySelector('p').innerText = '';
+      document.querySelector('#instructions').innerText = '';
       document.querySelector('img').src = '';
       document.querySelector('h4').innerText = '';
       document.querySelector('input').value = '';
@@ -33,8 +41,13 @@ function cocktailInfo() {
 
 function placeInfo() {
   document.querySelector('h2').innerText = carousel.drinks[position].strDrink;
-  document.querySelector('p').innerText = carousel.drinks[position].strInstructions;
+  document.querySelector('#instructions').innerText = carousel.drinks[position].strInstructions;
   document.querySelector('img').src = carousel.drinks[position].strDrinkThumb;
+  // Generate the paragraph
+  const ingredientsParagraph = getIngredientsParagraph(carousel.drinks[position]);
+  console.log(ingredientsParagraph);
+  // Insert into HTML (assuming an element with ID 'ingredients')
+  document.querySelector('#ingredients').textContent = ingredientsParagraph;
 }
 
 document.querySelector('#nextButton').addEventListener('click', fwdCarousel)
@@ -58,6 +71,19 @@ function backCarousel() {
       position--;
       placeInfo();
     }
+}
+
+function getIngredientsParagraph(apiObject) {
+  // Collect non-null ingredients
+  const ingredients = [];
+  for (let i = 1; i <= 15; i++) {
+    const key = `strIngredient${i}`;
+    if (apiObject[key]) {
+      ingredients.push(apiObject[key]);
+    }
+  }
+  console.log(ingredients);
+  return ingredients.join(", ");
 }
 
 
