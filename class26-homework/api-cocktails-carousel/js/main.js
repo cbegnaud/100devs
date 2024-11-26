@@ -6,36 +6,41 @@ document.querySelector('#inputField').addEventListener('keydown', (event) => {
   }
 });
 
-document.querySelector('#submitButton').addEventListener('click', cocktailInfo);
+document.querySelector('#submitButton').addEventListener('click', fetchInfo);
 
 let carousel = {};
 let position = 0;
 
-function cocktailInfo() {
+function fetchInfo() {
   let cocktail = document.querySelector('input').value;
   fetch(`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${cocktail}`)
   .then(res => res.json())
   .then(data => {
+    if (!data.drinks) {
+      alert(`There isn't a cocktail matching that description`);
+      return;
+    }
     console.log(data);
     carousel = data;
     position = 0;
-    placeInfo(position);
-    if (carousel.drinks.length === 1) {
-      document.querySelector('h4').innerText = `There is only one cocktail matching that description.`
-    } else {
-      document.querySelector('h4').innerText = `There are ${carousel.drinks.length} ${cocktail} cocktails matching that description.`;
-    }
+    // Removes buttons if fetch returns only 1 drink
+    toggleNavButtons(data.drinks.length > 1);
+    placeInfo();
+
+    // Improved with ternary operator
+    document.querySelector('h4').innerText = 
+        data.drinks.length === 1
+          ? `There is only one cocktail matching that description.`
+          : `There are ${data.drinks.length} cocktails matching "${cocktail}".`;
+    // if (carousel.drinks.length === 1) {
+    //   document.querySelector('h4').innerText = `There is only one cocktail matching that description.`
+    // } else {
+    //   document.querySelector('h4').innerText = `There are ${carousel.drinks.length} ${cocktail} cocktails matching that description.`;
+    // }
   })
   .catch(err => {
-    if (carousel.drinks === null) {
-      document.querySelector('h2').innerText = '';
-      document.querySelector('#instructions').innerText = '';
-      document.querySelector('img').src = '';
-      document.querySelector('h4').innerText = '';
-      document.querySelector('input').value = '';
-      alert(`There isn't a cocktail matching that description.`);
-    } else 
-    console.log(`error ${err}`)
+    console.error(`Error fetching data: ${err}`);
+    alert('An error occurred. Please try again.');
   });
 }
 
@@ -84,4 +89,9 @@ function getIngredientsParagraph(apiObject) {
   }
   console.log(ingredients);
   return ingredients.join(", ");
+}
+
+function toggleNavButtons(show) {
+  document.querySelector('#nextButton').style.display = show ? 'inline-block' : 'none';
+  document.querySelector('#prevButton').style.display = show ? 'inline-block' : 'none';
 }
