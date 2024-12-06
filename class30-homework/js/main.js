@@ -115,7 +115,7 @@ class BankAccountOpen {
       this.owner = owner;
       this.balance = 0;
    }
-   credit(value){
+   credit(value) {
       this.balance += value;
    }
    describe() {
@@ -133,3 +133,19 @@ arr.forEach(owner => {
    owner.credit(1000);
    console.log(owner.describe());
 });
+
+
+
+// // Array of names
+// const names = ['Sean', 'Brad', 'George'];
+
+// // Create bank accounts for each name
+// const accounts = names.map(name => new BankAccountOpen(name));
+
+// // Credit $1000 to each account and display the details
+// accounts.forEach(account => {
+//    account.credit(1000);
+//    console.log(account.describe());
+// });
+
+// console.log(accounts[accounts.findIndex(account => account.owner == "George")].describe());
